@@ -7,15 +7,22 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F531F414239E3B9B00D106FD /* Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = F531F413239E3B9B00D106FD /* Service.swift */; };
 		F57C715B23979A96007F5A01 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F57C715A23979A96007F5A01 /* AppDelegate.swift */; };
 		F57C715D23979A96007F5A01 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F57C715C23979A96007F5A01 /* SceneDelegate.swift */; };
 		F57C715F23979A96007F5A01 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F57C715E23979A96007F5A01 /* ContentView.swift */; };
 		F57C716123979A99007F5A01 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F57C716023979A99007F5A01 /* Assets.xcassets */; };
 		F57C716423979A99007F5A01 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F57C716323979A99007F5A01 /* Preview Assets.xcassets */; };
 		F57C716723979A99007F5A01 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F57C716523979A99007F5A01 /* LaunchScreen.storyboard */; };
+		F57C716F2397A377007F5A01 /* ZoneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F57C716E2397A377007F5A01 /* ZoneView.swift */; };
+		F57E6F35239A2879009B3594 /* DataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F57E6F34239A2879009B3594 /* DataModel.swift */; };
+		F58D631923A09A3B00BB9A01 /* QRCodeScan.swift in Sources */ = {isa = PBXBuildFile; fileRef = F58D631523A09A3B00BB9A01 /* QRCodeScan.swift */; };
+		F58D631A23A09A3B00BB9A01 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F58D631623A09A3B00BB9A01 /* SettingsView.swift */; };
+		F58D631B23A09A3B00BB9A01 /* ScannerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F58D631723A09A3B00BB9A01 /* ScannerVC.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		F531F413239E3B9B00D106FD /* Service.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Service.swift; sourceTree = "<group>"; };
 		F57C715723979A96007F5A01 /* AC Extension.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "AC Extension.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F57C715A23979A96007F5A01 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F57C715C23979A96007F5A01 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -24,6 +31,11 @@
 		F57C716323979A99007F5A01 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		F57C716623979A99007F5A01 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F57C716823979A99007F5A01 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F57C716E2397A377007F5A01 /* ZoneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoneView.swift; sourceTree = "<group>"; };
+		F57E6F34239A2879009B3594 /* DataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModel.swift; sourceTree = "<group>"; };
+		F58D631523A09A3B00BB9A01 /* QRCodeScan.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QRCodeScan.swift; sourceTree = "<group>"; };
+		F58D631623A09A3B00BB9A01 /* SettingsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		F58D631723A09A3B00BB9A01 /* ScannerVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScannerVC.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,8 +69,14 @@
 			isa = PBXGroup;
 			children = (
 				F57C715A23979A96007F5A01 /* AppDelegate.swift */,
+				F57C716E2397A377007F5A01 /* ZoneView.swift */,
 				F57C715C23979A96007F5A01 /* SceneDelegate.swift */,
 				F57C715E23979A96007F5A01 /* ContentView.swift */,
+				F531F413239E3B9B00D106FD /* Service.swift */,
+				F57E6F34239A2879009B3594 /* DataModel.swift */,
+				F58D631523A09A3B00BB9A01 /* QRCodeScan.swift */,
+				F58D631723A09A3B00BB9A01 /* ScannerVC.swift */,
+				F58D631623A09A3B00BB9A01 /* SettingsView.swift */,
 				F57C716023979A99007F5A01 /* Assets.xcassets */,
 				F57C716523979A99007F5A01 /* LaunchScreen.storyboard */,
 				F57C716823979A99007F5A01 /* Info.plist */,
@@ -146,9 +164,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F57E6F35239A2879009B3594 /* DataModel.swift in Sources */,
+				F57C716F2397A377007F5A01 /* ZoneView.swift in Sources */,
 				F57C715B23979A96007F5A01 /* AppDelegate.swift in Sources */,
+				F58D631A23A09A3B00BB9A01 /* SettingsView.swift in Sources */,
 				F57C715D23979A96007F5A01 /* SceneDelegate.swift in Sources */,
+				F58D631B23A09A3B00BB9A01 /* ScannerVC.swift in Sources */,
 				F57C715F23979A96007F5A01 /* ContentView.swift in Sources */,
+				F58D631923A09A3B00BB9A01 /* QRCodeScan.swift in Sources */,
+				F531F414239E3B9B00D106FD /* Service.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
