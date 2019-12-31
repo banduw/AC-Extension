@@ -37,7 +37,7 @@ struct SettingsView: View {
                 Image(systemName: "qrcode").imageScale(.large)
             }.padding(.trailing, 20)
             Button("Save"){
-                self.service.zones = []
+                self.service.zones = [[],[]]
                 self.service.url = self.url
                 self.service.apiKey = self.apiKey
                 self.service.saveSettings()

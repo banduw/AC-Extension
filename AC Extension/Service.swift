@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import UIKit
+import SwiftUI
 
 struct IvivaZoneInfo: Decodable {
     let ZoneName: String
@@ -16,13 +16,21 @@ struct IvivaZoneInfo: Decodable {
 
 struct IvivaZoneData: Decodable {
     let ZoneKey: String
+    let ZoneName: String
     let StartTime: String
     let EndTime: String
     let Status: String
+    
+    func getMinutes(dateString: String) -> Int {
+        let hour = Int(String(dateString.dropFirst(11).prefix(2))) ?? 0
+        let mins = Int(String(dateString.dropFirst(14).prefix(2))) ?? 0
+        return (hour * 60 + mins)
+    }
 }
 
 class Service: ObservableObject {
-    @Published var zones: [Zone] = []
+    @Published var zones: [[Zone]] = [[],[]]
+//    @Published var tomorrowZones: [Zone] = []
     var url: String = ""
     var apiKey: String = ""
     
@@ -81,111 +89,54 @@ class Service: ObservableObject {
         }
     }
 
-        
-    public func getZoneInfo(_ completion: @escaping (Bool) -> Void) {
-        executeAction(actionPath: "OI/SP_ACExt_Tenant_API/GetZoneInfo", body: nil){
-            data in
-            if let data = data {
-                let decoder = JSONDecoder()
-                if let results = try? decoder.decode([IvivaZoneInfo].self, from: data) {
-                    DispatchQueue.main.async {
-                        results.forEach(){
-                            bData in
-                            self.zones.append( Zone(service: self, name: bData.ZoneName, ivivaKey: bData.ZoneKey))
-                        }
-                        completion(!self.zones.isEmpty)
-                    }
-                } else {
-                    DispatchQueue.main.async {
-                        completion(false)
-                    }
-                }
-            } else {
-                DispatchQueue.main.async {
-                    completion(false)
-                }
-            }
-        }
+    func fetchData() {
+        getDataForDay(day: 0, apiPath: "OI/SP_ACExt_Tenant_API/GetDataForToday")
+        getDataForDay(day: 1, apiPath: "OI/SP_ACExt_Tenant_API/GetDataForTomorrow")
     }
     
-    public func getZoneData(_ completion: @escaping (Bool)-> Void){
-        executeAction(actionPath: "OI/SP_ACExt_Tenant_API/GetZoneData", body: nil){
+    public func getDataForDay(day: Int, apiPath: String){
+        executeAction(actionPath: apiPath, body: nil){
             data in
             if let data = data {
                 let decoder = JSONDecoder()
                 if let results = try? decoder.decode([IvivaZoneData].self, from: data) {
                     DispatchQueue.main.async {
-                        var updated = false
                         results.forEach(){
                             zData in
-                            if let zone = self.zones.first(where: { $0.ivivaKey == zData.ZoneKey}){
-                                zone.startHour = (zData.StartTime as NSString).floatValue
-                                zone.endHour = (zData.EndTime as NSString).floatValue
-                                zone.status = (zData.Status == "Requested" ? .requested : (zData.Status == "Scheduled" ? .scheduled : .normal))
-                                updated = true
-                            }
-                        }
-                        completion(updated)
-                    }
-                } else {
-                    DispatchQueue.main.async {
-                        completion(false)
-                    }
-                }
-            } else {
-                DispatchQueue.main.async {
-                    completion(false)
-                }
-            }
-        }
-    }
-         
-    /*public func getValues(for device: Device, _ completion: @escaping ([DevicePoint]?)-> Void){
-        let params: NSDictionary = ["DeviceID": device.name]
-        let pTypes = pointTypes.filter({$0.DeviceType == device.type})
-        if !pTypes.isEmpty, let body = try? JSONSerialization.data(withJSONObject: params, options: []) {
-            executeAction(actionPath: "OI/SBIM_RemoteEx_API/GetData", body: body){
-                data in
-                if let data = data {
-                    let decoder = JSONDecoder()
-                    if let results = try? decoder.decode([String: String].self, from: data) {
-                        DispatchQueue.main.async {
-                            var points: [DevicePoint] = []
-                            pTypes.forEach(){
-                                pType in
-                                if let pData = results[pType.PointName] {
-                                    points.append(DevicePoint(service: self, device: device, label: pType.Label, pointName: pType.PointName, value: pData, display: pType.Display, options: pType.Options))
-                                }
-                            }
-                            completion(points)
-                        }
-                    } else {
-                        DispatchQueue.main.async {
-                            completion(nil)
-                        }
-                    }
-                } else {
-                    DispatchQueue.main.async {
-                        completion(nil)
-                    }
-                }
-            }
-        }
-    }
+                            let date = String(zData.StartTime.prefix(10))
+                            let startMins = zData.getMinutes(dateString: zData.StartTime)
+                            let endMins = zData.getMinutes(dateString: zData.EndTime)
+                            let status: Zone.Status = (zData.Status == "Requested" ? .requested : (zData.Status == "Scheduled" ? .scheduled : .normal))
 
-    public func setValue(update point: DevicePoint, with newValue: String, _ completion: @escaping (Bool)-> Void){
-        let params: NSDictionary = ["DeviceID": point.device.name, "PointName": point.pointName, "PointValue": newValue]
+                            if let zone = self.zones[day].first(where: { $0.ivivaKey == zData.ZoneKey}){
+                                zone.date = date
+                                zone.startMins = startMins
+                                zone.endMins = endMins
+                                zone.status = status
+                            } else {
+                                self.zones[day].append(Zone(service: self, name: zData.ZoneName, ivivaKey: zData.ZoneKey, status: status, date: date, startMins: startMins, endMins: endMins))
+                            }
+                        }
+                        print("Data fetched for day \(day). Count = \(results.count)")
+                    }
+                }
+            }
+        }
+    }
+        
+    public func createRequest(for zone: Zone, date: String, start: String, end: String, _ completion: @escaping (Bool)-> Void){
+        let params: NSDictionary = ["ZoneKey": zone.ivivaKey, "Date": date, "Start": start, "End": end]
         if let body = try? JSONSerialization.data(withJSONObject: params, options: []) {
-            executeAction(actionPath: "OI/SBIM_RemoteEx_API/UpdatePoint", body: body){
+            executeAction(actionPath: "OI/SP_ACExt_Tenant_API/CreateRequest", body: body){
                 data in
                 if let data = data {
                     let decoder = JSONDecoder()
                     struct Result: Decodable {
-                        var Success: Bool
+                        var Success: String
                     }
                     if let result = try? decoder.decode(Result.self, from: data) {
                         DispatchQueue.main.async {
-                            completion(result.Success)
+                            completion(!result.Success.isEmpty)
                         }
                     } else {
                         DispatchQueue.main.async {
@@ -199,7 +150,7 @@ class Service: ObservableObject {
                 }
             }
         }
-    }*/
+    }
     
     
     public func saveSettings(){

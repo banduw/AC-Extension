@@ -17,15 +17,19 @@ class Zone: ObservableObject {
     let ivivaKey: String
     let name: String
     
-    @Published var startHour: Float = 8
-    @Published var endHour: Float = 20
-    @Published var status: Status = .normal
+    var date: String
+    @Published var startMins: Int
+    @Published var endMins: Int
+    @Published var status: Status
 
-    init(service: Service, name: String, ivivaKey: String, status: Status = .normal) {
+    init(service: Service, name: String, ivivaKey: String, status: Status = .normal, date: String, startMins: Int = 8 * 60, endMins: Int = 20 * 60) {
         self.service = service
         self.name = name
         self.ivivaKey = ivivaKey
         self.status = status
+        self.date = date
+        self.startMins = startMins
+        self.endMins = endMins
     }
     
     func statusLabel() -> String {
@@ -37,22 +41,23 @@ class Zone: ObservableObject {
         return (status == .requested ? UIColor.systemOrange:
             (status == .scheduled ? UIColor.systemGreen: UIColor.systemGray))
     }
+        
+    func getTimeString(for value: Int) -> String {
+        let hour = value / 60
+        let mins = value % 60
+        let str = "\(hour < 10 ? "0":"")\(hour):\(mins < 10 ? "0":"")\(mins)"
+        return str
+    }
     
-    func requestSchedule() -> Void {
-        status = .requested
-        DispatchQueue.main.asyncAfter(deadline: .now()+2, execute: {
-            self.status = .scheduled
-        })
+    func createRequest(start: Int, end: Int){
+        service.createRequest(for: self, date: date, start: getTimeString(for: start), end: getTimeString(for: end)){
+            success in
+            self.status = .requested
+            self.startMins = start
+            self.endMins = end
+        }
     }
 
-    func withdraw() -> Void {
-        status = .requested
-        startHour = 8
-        endHour = 20
-        DispatchQueue.main.asyncAfter(deadline: .now()+2, execute: {
-            self.status = .normal
-        })
-    }
 }
 
 

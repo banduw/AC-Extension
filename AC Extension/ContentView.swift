@@ -9,34 +9,32 @@
 import SwiftUI
 
 struct ContentView: View {
-    var service = Service()
-    @State var zones: [Zone] = []
+    @ObservedObject var service = Service()
     @State var settingsMode: Int? = nil
     @State var showAlert: Bool = false
 
     var body: some View {
         NavigationView {
-            List(zones, id: \.name) {
-                zone in
-                NavigationLink(destination: ZoneView(zone: zone)) {
-                    HStack {
-                        HStack {
-                            Text(zone.name)
-                            Spacer()
-                            HStack {
-                                if zone.status != .normal {
-                                    Image(systemName: "plus.circle.fill")
-                                        .foregroundColor(Color(zone.statusColor()))
-                                }
-                                Text(String(format: "%2.0f:00 - %2.0f:00", zone.startHour, zone.endHour))
-                            }
-                        }
-                        Spacer()
+            TabView {
+                List(service.zones[0], id: \.ivivaKey) {
+                    zone in
+                    NavigationLink(destination: ZoneView(zone: zone)) {
+                        ZoneRowView(zone: zone)
                     }
-                    .padding()
-                    .background(Color.init(.secondarySystemBackground))
-                    .foregroundColor(Color.init(.label))
-                        .cornerRadius(8)
+                }
+                .tabItem {
+                    Image(systemName: "clock")
+                    Text("Today")
+                }
+                List(service.zones[1], id: \.ivivaKey) {
+                    zone in
+                    NavigationLink(destination: ZoneView(zone: zone)) {
+                        ZoneRowView(zone: zone)
+                    }
+                }
+                .tabItem {
+                    Image(systemName: "clock")
+                    Text("Tomorrow")
                 }
             }
             .navigationBarTitle(Text("AC Zones"))
@@ -49,16 +47,16 @@ struct ContentView: View {
             NavigationLink(destination: SettingsView(service: service), tag:1, selection: $settingsMode){
                 Image(systemName: "gear").imageScale(.large)
             },trailing: Button(action: {
-            self.fetchData()
-        }, label: {
-            Image(systemName: "icloud.and.arrow.down")
-        }))
-            .onAppear(){
-                if self.service.url.isEmpty {
-                    self.settingsMode = 1
-                } else {
-                    self.fetchData()
-                }
+                self.service.fetchData()
+            }, label: {
+                Image(systemName: "icloud.and.arrow.down")
+            }))
+        }
+        .onAppear(){
+            if self.service.url.isEmpty {
+                self.settingsMode = 1
+            } else {
+                self.service.fetchData()
             }
         }
     }
@@ -66,36 +64,6 @@ struct ContentView: View {
     init() {
         UITableView.appearance().separatorStyle = .none
     }
-    
-    func fetchData() {
-        if service.zones.isEmpty {
-            service.getZoneInfo(){
-                success in
-                if success {
-                    self.service.getZoneData(){
-                        success in
-                        if success {
-                            self.zones = []
-                            self.zones = self.service.zones
-                        }
-                    }
-                } else {
-                    self.showAlert = true
-                }
-            }
-        } else {
-            self.service.getZoneData(){
-                success in
-                if success {
-                    self.zones = []
-                    self.zones = self.service.zones
-                } else {
-                    self.showAlert = true
-                }
-            }
-        }
-    }
-    
 }
 
 
@@ -105,3 +73,4 @@ struct ContentView_Previews: PreviewProvider {
         ContentView()
     }
 }
+
